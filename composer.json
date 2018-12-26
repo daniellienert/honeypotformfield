@@ -2,8 +2,16 @@
     "description": "Spam protection using a honeypot field for the Neos form builder",
     "type": "neos-package",
     "name": "dl/honeypotformfield",
+    "keywords": [
+        "neos",
+        "formbuilder",
+        "forms",
+        "spamprotection",
+        "honeypot"
+    ],
+    "license": "MIT",
     "require": {
-        "neos/flow": "*",
+        "neos/neos": ">4.0",
         "neos/form-builder": "*",
         "neos/form-fusionrenderer": "*"
     },
