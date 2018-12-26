@@ -1,0 +1,10 @@
+'DL.HoneypotFormField:SpamDetectionFinisher':
+  superTypes:
+    'Neos.Form.Builder:AbstractFinisher': TRUE
+  ui:
+    label: 'Spam Detection Finisher'
+    icon: 'fas fa-user-check'
+    inspector:
+      groups:
+        'finisher':
+          icon: 'fas fa-user-check'

@@ -1,0 +1,20 @@
+'DL.HoneypotFormField:HoneypotField':
+  superTypes:
+    'Neos.Form.Builder:FormElement': true
+    'Neos.Form.Builder:LabelMixin': false
+    'Neos.Form.Builder:DefaultValueMixin': false
+    'Neos.Form.Builder:RequiredCheckboxMixin': false
+  ui:
+    label: 'Honeypot form field'
+    icon: 'fas fa-shield-alt'
+    inspector:
+      groups:
+        'formElement':
+          icon: 'fas fa-shield-alt'
+    position: 10
+
+  properties:
+    'identifier':
+      ui:
+        inspector:
+          group: ~

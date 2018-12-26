@@ -1,0 +1,20 @@
+{
+    "description": "Spam protection using a honeypot field for the Neos form builder",
+    "type": "neos-package",
+    "name": "dl/honeypotformfield",
+    "require": {
+        "neos/flow": "*",
+        "neos/form-builder": "*",
+        "neos/form-fusionrenderer": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "DL\\HoneypotFormField\\": "Classes/"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "DL.HoneypotFormField"
+        }
+    }
+}
