@@ -16,3 +16,7 @@ Neos:
           'DL.HoneypotFormField:SpamDetectionFinisher':
             implementationClassName: DL\HoneypotFormField\Finishers\SpamDetectionFinisher
             options: {  }
+
+DL:
+  HoneypotFormField:
+    cancelSubsequentFinishersOnSpamDetection: true
