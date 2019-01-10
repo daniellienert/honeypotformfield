@@ -11,7 +11,7 @@
     ],
     "license": "MIT",
     "require": {
-        "neos/neos": ">4.0",
+        "neos/neos": ">3.0",
         "neos/form-builder": "*",
         "neos/form-fusionrenderer": "*"
     },

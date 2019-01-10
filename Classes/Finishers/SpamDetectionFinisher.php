@@ -14,7 +14,7 @@ namespace DL\HoneypotFormField\Finishers;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\PsrSystemLoggerInterface;
+use Neos\Flow\Log\SystemLoggerInterface;
 use Neos\Form\Core\Model\AbstractFinisher;
 
 class SpamDetectionFinisher extends AbstractFinisher
@@ -28,7 +28,7 @@ class SpamDetectionFinisher extends AbstractFinisher
 
     /**
      * @Flow\Inject
-     * @var PsrSystemLoggerInterface
+     * @var SystemLoggerInterface
      */
     protected $logger;
 
@@ -55,7 +55,7 @@ class SpamDetectionFinisher extends AbstractFinisher
         $formRuntime->getFormState()->setFormValue('spamDetected', $isSpam);
 
         if ($isSpam) {
-            $this->logger->info(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)));
+            $this->logger->log(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)), LOG_INFO);
 
             $formRuntime->getFormState()->setFormValue('spamMarker', '[SPAM]');
             $formRuntime->getFormState()->setFormValue('spamFilledOutHoneypotFields', implode(', ', $filledOutHoneypotFields));
