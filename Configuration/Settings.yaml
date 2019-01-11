@@ -6,7 +6,7 @@ Neos:
 
   Form:
     presets:
-      'fusion':
+      'default':
         formElementTypes:
           'DL.HoneypotFormField:HoneypotField':
             superTypes:
