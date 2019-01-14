@@ -19,4 +19,4 @@ Neos:
 
 DL:
   HoneypotFormField:
-    cancelSubsequentFinishersOnSpamDetection: true
+    cancelSubsequentFinishersOnSpamDetection: false
