@@ -52,13 +52,13 @@ class SpamDetectionFinisher extends AbstractFinisher
             }
         }
 
-        $formRuntime->getFormState()->setFormValue('spamDetected', $isSpam);
-
         if ($isSpam) {
+            $formRuntime->getFormState()->setFormValue('spamDetected', $isSpam);
             $this->logger->log(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)), LOG_INFO);
 
             $formRuntime->getFormState()->setFormValue('spamMarker', '[SPAM]');
             $formRuntime->getFormState()->setFormValue('spamFilledOutHoneypotFields', implode(', ', $filledOutHoneypotFields));
+
             if ($this->cancelSubsequentFinishersOnSpamDetection) {
                 $this->finisherContext->cancel();
                 $this->logger->log('Subsequent finishers are cancelled due to spam detection.', LOG_INFO);
