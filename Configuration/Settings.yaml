@@ -19,4 +19,9 @@ Neos:
 
 DL:
   HoneypotFormField:
+
+    # If set to true, all finishers that are configured after the SpamDetectionFinisher are skipped.
     cancelSubsequentFinishersOnSpamDetection: false
+
+    # Log the form data to the system log when classified as spam.
+    logSpamFormData: false
