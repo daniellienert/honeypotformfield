@@ -28,6 +28,12 @@ class SpamDetectionFinisher extends AbstractFinisher
     protected $cancelSubsequentFinishersOnSpamDetection;
 
     /**
+     * @Flow\InjectConfiguration(path="logSpamFormData")
+     * @var bool
+     */
+    protected $logSpamFormData;
+
+    /**
      * @Flow\Inject
      * @var LoggerInterface
      */
@@ -45,9 +51,15 @@ class SpamDetectionFinisher extends AbstractFinisher
 
         $isSpam = false;
         $filledOutHoneypotFields = [];
-
+        $nullHoneypotFields = [];
+        
         foreach ($honeypotFieldIdentifiers as $honeypotFieldIdentifier) {
-            if (isset($fieldValues[$honeypotFieldIdentifier]) && (string)$fieldValues[$honeypotFieldIdentifier] !== '') {
+            if ($fieldValues[$honeypotFieldIdentifier] === null) {
+                $isSpam = true;
+                $nullHoneypotFields[] = $honeypotFieldIdentifier;
+            }
+
+            if ((string)$fieldValues[$honeypotFieldIdentifier] !== '') {
                 $isSpam = true;
                 $filledOutHoneypotFields[] = $honeypotFieldIdentifier;
             }
@@ -55,7 +67,13 @@ class SpamDetectionFinisher extends AbstractFinisher
 
         if ($isSpam) {
             $formRuntime->getFormState()->setFormValue('spamDetected', $isSpam);
-            $this->logger->info(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)), LogEnvironment::fromMethodName(__METHOD__));
+
+            $additionalData = [];
+            if ($this->logSpamFormData) {
+                $additionalData['formData'] = $fieldValues;
+            }
+
+            $this->logger->info(sprintf('The submitted form was detected as spam, as the honeypot form fields was filled [%s] or null [%s]', implode(', ', $filledOutHoneypotFields), implode(', ', $nullHoneypotFields)), array_merge($additionalData, LogEnvironment::fromMethodName(__METHOD__)));
 
             $formRuntime->getFormState()->setFormValue('spamMarker', '[SPAM]');
             $formRuntime->getFormState()->setFormValue('spamFilledOutHoneypotFields', implode(', ', $filledOutHoneypotFields));
