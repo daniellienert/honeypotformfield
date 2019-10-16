@@ -14,8 +14,9 @@ namespace DL\HoneypotFormField\Finishers;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SystemLoggerInterface;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Form\Core\Model\AbstractFinisher;
+use Psr\Log\LoggerInterface;
 
 class SpamDetectionFinisher extends AbstractFinisher
 {
@@ -28,7 +29,7 @@ class SpamDetectionFinisher extends AbstractFinisher
 
     /**
      * @Flow\Inject
-     * @var SystemLoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -54,14 +55,14 @@ class SpamDetectionFinisher extends AbstractFinisher
 
         if ($isSpam) {
             $formRuntime->getFormState()->setFormValue('spamDetected', $isSpam);
-            $this->logger->log(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)), LOG_INFO);
+            $this->logger->info(sprintf('The submitted form was detected as spam, as the honeypot form field %s was filled.', implode(', ', $filledOutHoneypotFields)), LogEnvironment::fromMethodName(__METHOD__));
 
             $formRuntime->getFormState()->setFormValue('spamMarker', '[SPAM]');
             $formRuntime->getFormState()->setFormValue('spamFilledOutHoneypotFields', implode(', ', $filledOutHoneypotFields));
 
             if ($this->cancelSubsequentFinishersOnSpamDetection) {
                 $this->finisherContext->cancel();
-                $this->logger->log('Subsequent finishers are cancelled due to spam detection.', LOG_INFO);
+                $this->logger->info('Subsequent finishers are cancelled due to spam detection.', LogEnvironment::fromMethodName(__METHOD__));
             }
         }
     }
