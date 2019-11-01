@@ -14,7 +14,28 @@ filled out, additional field values are introduced which can be used in the foll
     
 # Usage
 
+## Using the flow form configuration
+
+    type: 'Neos.Form:Form'
+    identifier: 'my-form'
+    renderables:
+      items:
+        type: 'Neos.Form:Page'
+        identifier: 'my-page'
+        renderables:
+          name:
+            type: 'Neos.Form:SingleLineText'
+            identifier: 'name'
+          honeyPot:
+            type: 'DL.HoneypotFormField:HoneypotField'
+            identifier: 'full_name'
+    
+    finishers:
+      spamDetection:
+        identifier: 'DL.HoneypotFormField:SpamDetectionFinisher'
+
 ## Using the Neos Form Builder
+**Requires the suggested package neos/form-builder.**
 
 1. Add honeypot form fields (at least one - as many as you like)
 2. Add the Spam detection finisher before the finishers, that should use the spam markers.
@@ -35,25 +56,6 @@ These fields can then be used for example to mark mails as spam:
 
 <img src="Documentation/Images/UseSpamMarker.png" alt="Use the spam marker in email header" width="50%"/>
 
-## Using the flow form configuration
-
-    type: 'Neos.Form:Form'
-    identifier: 'my-form'
-    renderables:
-      items:
-        type: 'Neos.Form:Page'
-        identifier: 'my-page'
-        renderables:
-          name:
-            type: 'Neos.Form:SingleLineText'
-            identifier: 'name'
-          honeyPot:
-            type: 'DL.HoneypotFormField:HoneypotField'
-            identifier: 'full_name'
-    
-    finishers:
-      spamDetection:
-        identifier: 'DL.HoneypotFormField:SpamDetectionFinisher'
 
 # Settings
 
