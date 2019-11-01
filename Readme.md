@@ -12,7 +12,9 @@ filled out, additional field values are introduced which can be used in the foll
 
     composer require dl/honeypotformfield
     
-## Usage
+# Usage
+
+## Using the Neos Form Builder
 
 1. Add honeypot form fields (at least one - as many as you like)
 2. Add the Spam detection finisher before the finishers, that should use the spam markers.
@@ -33,6 +35,28 @@ These fields can then be used for example to mark mails as spam:
 
 <img src="Documentation/Images/UseSpamMarker.png" alt="Use the spam marker in email header" width="50%"/>
 
+## Using the flow form configuration
+
+    type: 'Neos.Form:Form'
+    identifier: 'my-form'
+    renderables:
+      items:
+        type: 'Neos.Form:Page'
+        identifier: 'my-page'
+        renderables:
+          name:
+            type: 'Neos.Form:SingleLineText'
+            identifier: 'name'
+          honeyPot:
+            type: 'DL.HoneypotFormField:HoneypotField'
+            identifier: 'full_name'
+    
+    finishers:
+      spamDetection:
+        identifier: 'DL.HoneypotFormField:SpamDetectionFinisher'
+
+# Settings
+
 ### Cancel mail sending on spam detection
 
 When the `cancelSubsequentFinishersOnSpamDetection` setting is set to `true`, subsequent finishers are not executed
@@ -41,3 +65,8 @@ when the form was detected as spam.
 <img src="Documentation/Images/CancelFinisherExecution.png" alt="Use the spam marker in email header" width="50%"/>
 
 Here the confirmation message is shown but mail sending is cancelled.
+
+### Log form content when detected as spam
+
+In order to debug the spam detection and to see what kind of spam is coming in, you can enable the logging of the complete 
+form content with setting `logSpamFormData` to true.  
