@@ -1,0 +1,22 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        'DL.HoneypotFormField': true
+
+  Form:
+    presets:
+      'default':
+        formElementTypes:
+          'DL.HoneypotFormField:HoneypotField':
+            superTypes:
+              'Neos.Form:FormElement': true
+              'Neos.Form:TextMixin': true
+        finisherPresets:
+          'DL.HoneypotFormField:SpamDetectionFinisher':
+            implementationClassName: DL\HoneypotFormField\Finishers\SpamDetectionFinisher
+            options: {  }
+
+    FusionRenderer:
+      fusionAutoInclude:
+        'DL.HoneypotFormField': true
