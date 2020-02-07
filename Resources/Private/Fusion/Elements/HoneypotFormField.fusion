@@ -1,0 +1,15 @@
+prototype(DL.HoneypotFormField:HoneypotField) < prototype(Neos.Form.FusionRenderer:FormElement) {
+    fieldContainer {
+        field {
+            tagName = 'input'
+            attributes {
+                type = 'text'
+                name = ${elementName}
+                value = ''
+                autocomplete = 'off'
+                tabindex = '-1'
+                style = 'display:none !important'
+            }
+        }
+    }
+}

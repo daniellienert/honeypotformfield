@@ -1,0 +1,6 @@
+prototype(DL.HoneypotFormField:HoneypotField.Definition) < prototype(Neos.Form.Builder:FormElement.Definition) {
+    formElementType = 'DL.HoneypotFormField:HoneypotField'
+    properties {
+        placeholder = ${null}
+    }
+}
