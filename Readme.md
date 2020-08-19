@@ -1,4 +1,4 @@
-# Honeypot Field for Neos.Form.Builder
+# Honeypot Field for Neos.Form and Neos.Form.Builder
 
 [![Latest Stable Version](https://poser.pugx.org/dl/honeypotformfield/v/stable)](https://packagist.org/packages/dl/honeypotformfield) [![Total Downloads](https://poser.pugx.org/dl/honeypotformfield/downloads)](https://packagist.org/packages/dl/honeypotformfield) [![License](https://poser.pugx.org/dl/honeypotformfield/license)](https://packagist.org/packages/dl/honeypotformfield)
 
