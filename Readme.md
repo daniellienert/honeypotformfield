@@ -70,7 +70,23 @@ when the form was detected as spam.
 
 Here the confirmation message is shown but mail sending is cancelled.
 
-### Log form content when detected as spam
+### Configuration:
+
+```yaml
+DL:
+  HoneypotFormField:
+    cancelSubsequentFinishersOnSpamDetection: true
+```
+
+## Log form content when detected as spam
 
 In order to debug the spam detection and to see what kind of spam is coming in, you can enable the logging of the complete
 form content with setting `logSpamFormData` to true.
+
+### Configuration:
+
+```yaml
+DL:
+  HoneypotFormField:
+    logSpamFormData: true
+```
