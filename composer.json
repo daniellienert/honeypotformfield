@@ -11,7 +11,7 @@
     ],
     "license": "MIT",
     "require": {
-        "neos/neos": "^4.1 || ^5.0 || ^7.0 || ^8.0"
+        "neos/neos": "^9.0"
     },
     "suggest": {
         "neos/form-builder": "Adds a builder for the Flow Form Framework to the Neos CMS backend.",
