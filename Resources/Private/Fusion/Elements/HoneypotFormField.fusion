@@ -1,15 +1,10 @@
 prototype(DL.HoneypotFormField:HoneypotField) < prototype(Neos.Form.FusionRenderer:FormElement) {
     fieldContainer {
         field {
-            tagName = 'input'
-            attributes {
-                type = 'text'
-                name = ${elementName}
-                value = ''
-                autocomplete = 'off'
-                tabindex = '-1'
-                style = 'display:none !important'
-            }
+            templatePath = 'resource://DL.HoneypotFormField/Private/Fusion/Elements/HoneypotFieldTemplate.html'
+            elementName = ${elementName}
+            timestampWithHmac = ${Honeypot.timestampWithHmac()}
+            fieldId = ${'hp_' + element.identifier}
         }
     }
 }

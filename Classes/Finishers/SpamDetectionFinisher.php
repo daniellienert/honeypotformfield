@@ -13,8 +13,10 @@ namespace DL\HoneypotFormField\Finishers;
  * source code.
  */
 
+use DL\HoneypotFormField\Validation\Validator\TimestampWithHmacValidator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Validation\ValidatorResolver;
 use Neos\Form\Core\Model\AbstractFinisher;
 use Psr\Log\LoggerInterface;
 
@@ -34,10 +36,28 @@ class SpamDetectionFinisher extends AbstractFinisher
     protected $logSpamFormData;
 
     /**
+     * @Flow\InjectConfiguration(path="minimumTimestampAge")
+     * @var int
+     */
+    protected $minimumTimestampAge;
+
+    /**
+     * @Flow\InjectConfiguration(path="maximumTimestampAge")
+     * @var int
+     */
+    protected $maximumTimestampAge;
+
+    /**
      * @Flow\Inject
      * @var LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @Flow\Inject
+     * @var ValidatorResolver
+     */
+    protected $validatorResolver;
 
     /**
      * @return void
@@ -50,18 +70,46 @@ class SpamDetectionFinisher extends AbstractFinisher
         $fieldValues = $this->finisherContext->getFormValues();
 
         $isSpam = false;
-        $filledOutHoneypotFields = [];
-        $nullHoneypotFields = [];
-        
+        $spamReasons = [];
+
         foreach ($honeypotFieldIdentifiers as $honeypotFieldIdentifier) {
-            if ($fieldValues[$honeypotFieldIdentifier] === null) {
+            $honeypotValue = $fieldValues[$honeypotFieldIdentifier] ?? null;
+
+            // Check if the honeypot field structure is valid
+            if ($honeypotValue === null || !is_array($honeypotValue)) {
                 $isSpam = true;
-                $nullHoneypotFields[] = $honeypotFieldIdentifier;
+                $spamReasons[] = sprintf('%s: field is null or not an array', $honeypotFieldIdentifier);
+                continue;
             }
 
-            if ((string)$fieldValues[$honeypotFieldIdentifier] !== '') {
+            // Layer 1: Empty field validation - must be empty
+            if (!isset($honeypotValue['one']) || (string)$honeypotValue['one'] !== '') {
                 $isSpam = true;
-                $filledOutHoneypotFields[] = $honeypotFieldIdentifier;
+                $spamReasons[] = sprintf('%s[one]: layer 1 failed (empty field was filled)', $honeypotFieldIdentifier);
+            }
+
+            // Layer 2: Server timestamp validation - must be valid and within age limits
+            if (!isset($honeypotValue['two'])) {
+                $isSpam = true;
+                $spamReasons[] = sprintf('%s[two]: layer 2 failed (field not set)', $honeypotFieldIdentifier);
+            } else {
+                $validationError = $this->validateTimestamp($honeypotValue['two']);
+                if ($validationError !== null) {
+                    $isSpam = true;
+                    $spamReasons[] = sprintf('%s[two]: layer 2 failed (%s)', $honeypotFieldIdentifier, $validationError);
+                }
+            }
+
+            // Layer 3: JavaScript interaction proof - must be valid and within age limits
+            if (!isset($honeypotValue['three'])) {
+                $isSpam = true;
+                $spamReasons[] = sprintf('%s[three]: layer 3 failed (field not set)', $honeypotFieldIdentifier);
+            } else {
+                $validationError = $this->validateTimestamp($honeypotValue['three']);
+                if ($validationError !== null) {
+                    $isSpam = true;
+                    $spamReasons[] = sprintf('%s[three]: layer 3 failed (%s)', $honeypotFieldIdentifier, $validationError);
+                }
             }
         }
 
@@ -73,16 +121,54 @@ class SpamDetectionFinisher extends AbstractFinisher
                 $additionalData['formData'] = $fieldValues;
             }
 
-            $this->logger->info(sprintf('The submitted form was detected as spam, as the honeypot form fields was filled [%s] or null [%s]', implode(', ', $filledOutHoneypotFields), implode(', ', $nullHoneypotFields)), array_merge($additionalData, LogEnvironment::fromMethodName(__METHOD__)));
+            $this->logger->info(
+                sprintf('The submitted form was detected as spam. Reasons: %s', implode('; ', $spamReasons)),
+                array_merge($additionalData, LogEnvironment::fromMethodName(__METHOD__))
+            );
 
             $formRuntime->getFormState()->setFormValue('spamMarker', '[SPAM]');
-            $formRuntime->getFormState()->setFormValue('spamFilledOutHoneypotFields', implode(', ', $filledOutHoneypotFields));
+            $formRuntime->getFormState()->setFormValue('spamReasons', implode('; ', $spamReasons));
 
             if ($this->cancelSubsequentFinishersOnSpamDetection) {
                 $this->finisherContext->cancel();
                 $this->logger->info('Subsequent finishers are cancelled due to spam detection.', LogEnvironment::fromMethodName(__METHOD__));
             }
         }
+    }
+
+    /**
+     * Validates a timestamp with HMAC
+     *
+     * @param mixed $value The timestamp value to validate
+     * @return string|null Error message if invalid, null if valid
+     */
+    protected function validateTimestamp($value): ?string
+    {
+        if (!is_string($value) || $value === '') {
+            return 'value is not a string or is empty';
+        }
+
+        $validator = $this->validatorResolver->createValidator(
+            TimestampWithHmacValidator::class,
+            [
+                'minimumAge' => $this->minimumTimestampAge,
+                'maximumAge' => $this->maximumTimestampAge
+            ]
+        );
+        $result = $validator->validate($value);
+
+        if ($result->hasErrors()) {
+            $errors = $result->getFlattenedErrors();
+            $errorMessages = [];
+            foreach ($errors as $propertyPath => $propertyErrors) {
+                foreach ($propertyErrors as $error) {
+                    $errorMessages[] = $error->getMessage();
+                }
+            }
+            return implode(', ', $errorMessages);
+        }
+
+        return null;
     }
 
     /**

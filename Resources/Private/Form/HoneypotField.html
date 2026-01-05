@@ -1,5 +1,56 @@
 {namespace form=Neos\Form\ViewHelpers}
+{namespace hp=DL\HoneypotFormField\ViewHelpers}
 <f:layout name="Neos.Form:Field" />
 <f:section name="field">
-    <f:form.textfield property="{element.identifier}" id="{element.uniqueIdentifier}" class="{element.properties.elementClassAttribute}" style="display:none !important" placeholder="{element -> form:translateElementProperty(property: 'placeholder')}" errorClass="{element.properties.elementErrorClassAttribute}" maxlength="{element.properties.maxlength}" additionalAttributes="{autocomplete: 'off', tabindex: '-1'}"/>
+    <div style="display:none !important">
+        <f:form.textfield
+            property="{element.identifier}[one]"
+            value=""
+            additionalAttributes="{autocomplete: 'off', tabindex: '-1'}"
+        />
+
+        <f:form.textfield
+            property="{element.identifier}[two]"
+            value="{hp:timestampWithHmac()}"
+            additionalAttributes="{autocomplete: 'off', tabindex: '-1'}"
+        />
+
+        <f:form.textfield
+            property="{element.identifier}[three]"
+            id="hp_{element.identifier}"
+            value=""
+            additionalAttributes="{autocomplete: 'off', tabindex: '-1'}"
+        />
+
+        <script data-name="hp_{element.identifier}" data-value="{hp:timestampWithHmac()}">
+(function() {
+    'use strict';
+    const events = ['touchstart', 'keydown', 'mousemove', 'touchmove'];
+    const doc = document;
+    const script = doc.currentScript;
+    if (!script) return;
+    const dataset = script.dataset || {};
+    const fieldName = dataset.name;
+    const timestampValue = dataset.value;
+    function fillField() {
+        const field = doc.getElementById(fieldName);
+        if (field && timestampValue) {
+            field.setAttribute('value', timestampValue);
+        }
+        cleanup();
+    }
+    function init() {
+        events.forEach(function(event) {
+            doc.addEventListener(event, fillField, true);
+        });
+    }
+    function cleanup() {
+        events.forEach(function(event) {
+            doc.removeEventListener(event, fillField, true);
+        });
+    }
+    init();
+})();
+        </script>
+    </div>
 </f:section>
