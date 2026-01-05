@@ -1,5 +1,7 @@
 Neos:
   Neos:
+    defaultContext:
+      Honeypot: DL\HoneypotFormField\Helper\HoneypotHelper
     fusion:
       autoInclude:
         'DL.HoneypotFormField': true

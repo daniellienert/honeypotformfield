@@ -6,3 +6,10 @@ DL:
 
     # Log the form data to the system log when classified as spam.
     logSpamFormData: false
+
+    # Timestamp validation settings
+    # Minimum age in seconds - prevents instant bot submissions (default: 10 seconds)
+    minimumTimestampAge: 10
+
+    # Maximum age in seconds - prevents replay attacks (default: 86400 seconds = 24 hours)
+    maximumTimestampAge: 86400

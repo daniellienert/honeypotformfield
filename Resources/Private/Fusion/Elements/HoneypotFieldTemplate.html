@@ -1,0 +1,35 @@
+<div style="display:none !important">
+    <input type="text" name="{elementName}[one]" value="" autocomplete="off" tabindex="-1" />
+    <input type="text" name="{elementName}[two]" value="{timestampWithHmac}" autocomplete="off" tabindex="-1" />
+    <input type="text" name="{elementName}[three]" id="{fieldId}" value="" autocomplete="off" tabindex="-1" />
+    <script data-name="{fieldId}" data-value="{timestampWithHmac}">
+(function() {
+    'use strict';
+    const events = ['touchstart', 'keydown', 'mousemove', 'touchmove'];
+    const doc = document;
+    const script = doc.currentScript;
+    if (!script) return;
+    const dataset = script.dataset || {};
+    const fieldName = dataset.name;
+    const timestampValue = dataset.value;
+    function fillField() {
+        const field = doc.getElementById(fieldName);
+        if (field && timestampValue) {
+            field.setAttribute('value', timestampValue);
+        }
+        cleanup();
+    }
+    function init() {
+        events.forEach(function(event) {
+            doc.addEventListener(event, fillField, true);
+        });
+    }
+    function cleanup() {
+        events.forEach(function(event) {
+            doc.removeEventListener(event, fillField, true);
+        });
+    }
+    init();
+})();
+    </script>
+</div>
