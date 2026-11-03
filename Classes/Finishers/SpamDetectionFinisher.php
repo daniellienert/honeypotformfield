@@ -54,12 +54,13 @@ class SpamDetectionFinisher extends AbstractFinisher
         $nullHoneypotFields = [];
         
         foreach ($honeypotFieldIdentifiers as $honeypotFieldIdentifier) {
-            if ($fieldValues[$honeypotFieldIdentifier] === null) {
+            // A request without the honeypot field has no array key at all, which must not end in an "Undefined array key" error
+            $honeypotFieldValue = $fieldValues[$honeypotFieldIdentifier] ?? null;
+
+            if ($honeypotFieldValue === null) {
                 $isSpam = true;
                 $nullHoneypotFields[] = $honeypotFieldIdentifier;
-            }
-
-            if ((string)$fieldValues[$honeypotFieldIdentifier] !== '') {
+            } elseif ((string)$honeypotFieldValue !== '') {
                 $isSpam = true;
                 $filledOutHoneypotFields[] = $honeypotFieldIdentifier;
             }
